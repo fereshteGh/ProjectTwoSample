@@ -1,13 +1,7 @@
 package Terminal;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
-import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Terminal implements Runnable {
@@ -20,9 +14,9 @@ public class Terminal implements Runnable {
     private String outLogPath;
     private String terminalId;
     private String terminalType;
-    private Transaction transactions;
+    private List<Transaction> transactions;
 
-    public Terminal(int port, String ip, String outLogPath, String terminalId, String terminalType,Transaction trans) {
+    public Terminal(int port, String ip, String outLogPath, String terminalId, String terminalType, List<Transaction> trans) {
         this.port = port;
         this.ip = ip;
         this.outLogPath = outLogPath;
@@ -34,34 +28,37 @@ public class Terminal implements Runnable {
     public void connectToServer() throws IOException {
 
         System.out.println("Connection attempting!");
-        terminal = new Socket(InetAddress.getByName(ip), port);
+        //InetAddress.getByName(ip)
+        terminal = new Socket("localhost", port);
         System.out.println("Connected to " + terminal.getInetAddress().getHostName());
     }
 
     public void getStream() throws IOException {
 
-        output = new ObjectOutputStream(terminal.getOutputStream());
-        output.flush();
-        DataOutputStream dataOutput = new DataOutputStream(output);
-        //dataOutput.writeBytes(list.toString());
-        input = new ObjectInputStream(terminal.getInputStream());
-        String filePath = "src/main/resources/response.xml";
-        File xmlFile = new File(filePath);
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        DocumentBuilder db;
         try {
-            db = dbf.newDocumentBuilder();
-        if (xmlFile.exists()) {
-            Document doc = db.parse(xmlFile);
-Element element = doc.getDocumentElement();
-        } }catch (Exception e) {
-                e.printStackTrace();
+            output = new ObjectOutputStream(terminal.getOutputStream());
+            DataOutputStream dataOutputStream = new DataOutputStream(terminal.getOutputStream());
+            input = new ObjectInputStream(terminal.getInputStream());
+            dataOutputStream.writeInt(transactions.size());
+            if (transactions != null && transactions.size() > 0) {
+                for (int i = 0; i < transactions.size(); i++) {
+                    System.out.println(transactions.get(i));
+                    output.writeObject(transactions.get(i));
+                    output.flush();
+                    System.out.println("1111111");
+//                    String message = input.readUTF();
+                    System.out.println("22222");
+                   // System.out.println("Server message : " + message);
+                }
+                System.out.println("111111");
             }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-    public void processConnection() {
-
     }
+
 
     public void closeConnection() throws IOException {
         System.out.println("Closing connection");
@@ -75,7 +72,6 @@ Element element = doc.getDocumentElement();
         try {
             connectToServer();
             getStream();
-            processConnection();
             closeConnection();
         } catch (IOException e) {
             e.printStackTrace();

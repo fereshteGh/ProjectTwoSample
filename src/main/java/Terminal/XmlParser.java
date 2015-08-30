@@ -5,6 +5,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -15,16 +16,9 @@ public class XmlParser {
 
     public Terminal parse() {
 
-        Transaction transaction = null;
-        String outLogPath = null;
-        int port = 0;
-        String serverIp = null;
-        int transactionId;
-        String depositType;
-        BigDecimal amount;
-        String deposit;
-        String terminalId = null;
-        String terminalType = null;
+        try {
+
+
 
         // Read from file
         String filePath = "src/main/resources/terminal.xml";
@@ -33,42 +27,43 @@ public class XmlParser {
         DocumentBuilder db;
 
 
-
-        try {
             db = dbf.newDocumentBuilder();
             if (xmlFile.exists()) {
+               ArrayList<Transaction> transactions = new ArrayList();
+
                 Document doc = db.parse(xmlFile);
 
                 Element terminal = doc.getDocumentElement();
-                 terminalId = terminal.getAttribute("id");
-                 terminalType = terminal.getAttribute("type");
+                String terminalId = terminal.getAttribute("id");
+                String  terminalType = terminal.getAttribute("type");
 
                 Element server = (Element) terminal.getElementsByTagName("server").item(0);
-                serverIp = server.getAttribute("ip");
-                port = Integer.parseInt(server.getAttribute("port"));
+                String  serverIp = server.getAttribute("ip");
+                int  port = Integer.parseInt(server.getAttribute("port"));
 
-                Element outLog = (Element) terminal.getElementsByTagName("outLog");
-                outLogPath = outLog.getAttribute("path");
+                Element outLog = (Element) terminal.getElementsByTagName("outLog").item(0);
+                String outLogPath = outLog.getAttribute("path");
 
-                Element transactions = (Element) terminal.getElementsByTagName("transactions");
-                NodeList nodeList3 = transactions.getElementsByTagName("transaction");
+                Element transactions1 = (Element) terminal.getElementsByTagName("transactions").item(0);
+                NodeList nodeList3 = transactions1.getElementsByTagName("transaction");
                 if (nodeList3 != null && nodeList3.getLength() > 0) {
                     for (int k = 0; k < nodeList3.getLength(); k++) {
                         Node node3 = nodeList3.item(k);
                         Element element3 = (Element) node3;
-                        transactionId = Integer.parseInt(element3.getAttribute("id"));
-
-                        depositType = element3.getAttribute("type");
-
-                        amount = BigDecimal.valueOf(Long.parseLong(element3.getAttribute("amount")));
-
-                        deposit =element3.getAttribute("deposit");
-
-                         transaction = new Transaction(transactionId,depositType,amount,deposit);
+                        int transactionId = Integer.parseInt(element3.getAttribute("id"));
+                        String depositType = element3.getAttribute("type");
+                        BigDecimal amount = BigDecimal.valueOf(Long.parseLong(element3.getAttribute("amount")));
+                        String deposit =element3.getAttribute("deposit");
+                        Transaction  transaction = new Transaction(transactionId,depositType,amount,deposit);
+                        transactions.add(transaction);
                     }
+
                 }
+                return new Terminal(port, serverIp, outLogPath, terminalId, terminalType,transactions);
+
             }
-            return new Terminal(port, serverIp, outLogPath, terminalId, terminalType,transaction);
+
+
 
         } catch (Exception e) {
             e.printStackTrace();

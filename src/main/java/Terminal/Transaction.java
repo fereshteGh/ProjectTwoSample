@@ -1,11 +1,14 @@
 package Terminal;
 
 import ExceptionPack.TransactionException;
+import Server.Deposit;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class Transaction {
+public class Transaction implements Serializable {
     private int transactionId;
-    public TransactionType Ttype;
+    public TransactionType tType;
     private BigDecimal amount;
     private String deposit;
 
@@ -16,7 +19,7 @@ public class Transaction {
 
     public Transaction(int transactionId, String type, BigDecimal amount, String deposit) throws TransactionException {
         this.transactionId = transactionId;
-        this.Ttype = transactionType(type);
+        this.tType = transactionType(type);
         this.amount = amount;
         this.deposit = deposit;
     }
@@ -29,4 +32,28 @@ public class Transaction {
         else
             throw new TransactionException();
     }
+
+    public TransactionType getTransactionType(){
+        return tType;
+    }
+
+    public BigDecimal getAmount(){
+        return amount;
+    }
+
+    public String getDeposit() {
+        return deposit;
+    }
+
+    @Override
+    public String toString() {
+        return " Transaction { " +
+                " transactionId = " + transactionId +
+                " , tType = " + tType +
+                " , amount = " + amount +
+                " , deposit = '" + deposit + '\'' +
+                '}';
+    }
+
+
 }

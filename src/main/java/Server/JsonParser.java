@@ -7,39 +7,37 @@ import org.json.simple.parser.ParseException;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.json.simple.JSONArray;
 
 public class JsonParser {
-    public ArrayList Parse() {
-        String filePath = "src/main/resources/core.json";
-        Long  port;
-         ArrayList list= new ArrayList();
+    public Server Parse() {
         try {
+            ArrayList<Deposit> deposit =new ArrayList();
+            String filePath = "src/main/resources/core.json";
             FileReader fileReader = new FileReader(filePath);
             JSONParser jsonParser = new JSONParser();
             Object obj = jsonParser.parse(fileReader);
             JSONObject jsonObject = (JSONObject) obj;
-            port = (Long)jsonObject.get("port");
-            list.add(port);
+            int port = ((Long) jsonObject.get("port")).intValue();
             System.out.println("Port : " + port);
-            JSONArray deposit = (JSONArray) jsonObject.get("deposits");
-            for (int i = 0; i < deposit.size(); i++)
-                System.out.println("deposit List : " + deposit.get(i));
-
-            //take each value separately
-            Iterator j = deposit.iterator();
+            JSONArray deposits = (JSONArray) jsonObject.get("deposits");
+            Iterator j = deposits.iterator();
             while (j.hasNext()) {
                 JSONObject jsonObject1 = (JSONObject) j.next();
-                System.out.println(" deposit List with " + "customer " + jsonObject1.get(" customer") + " and customerNumber : " + jsonObject1.get("id") + " and initialBalance" + jsonObject1.get(" initialBalance") + " and upperBound " + jsonObject1.get("upperBound"));
-                list.add(jsonObject1.get(" customer"));
-                list.add(jsonObject1.get("id"));
-                list.add(jsonObject1.get(" initialBalance"));
-                list.add(jsonObject1.get("upperBound"));
+                String customerName = (String) jsonObject1.get("customer");
+                String customerNumber = (String) jsonObject1.get("id");
+                BigDecimal initialBalance = new BigDecimal( jsonObject1.get("initialBalance").toString().replace(",",""));
+                BigDecimal upperBound =  new BigDecimal( jsonObject1.get("upperBound").toString().replace(",",""));
+                Deposit depos = new Deposit(customerName, customerNumber, initialBalance, upperBound);
+                deposit.add(depos);
             }
-            return list;
+
+           String outLog = (String) jsonObject.get("outLog");
+            return new Server(port, deposit, outLog);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
