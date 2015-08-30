@@ -1,8 +1,11 @@
+package Server;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.List;
 
 public class Server {
     private ServerSocket server;
@@ -10,9 +13,13 @@ public class Server {
     private int counter = 1;
     private ObjectOutputStream output;
     private ObjectInputStream input;
+   JsonParser jsonParser = new JsonParser();
+    List list = jsonParser.Parse();
 
     public void runServer() throws IOException {
-        server = new ServerSocket(12345);
+        JsonParser jsonParser = new JsonParser();
+        Integer port =(Integer) list.get(0);
+        server = new ServerSocket(port);
         do {
             waitForConnection();
             getStream();
