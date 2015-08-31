@@ -1,7 +1,7 @@
-package ExceptionPack;
+package exceptions;
 public class DepositNotFoundException extends Exception {
     public DepositNotFoundException() {
-        super("Deposit not Found");
+        super("Deposit not Found!");
     }
 }
 
