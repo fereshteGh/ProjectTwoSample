@@ -1,7 +1,3 @@
-package Terminal;
-
-import ExceptionPack.TransactionException;
-import Server.Deposit;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,7 +7,6 @@ public class Transaction implements Serializable {
     public TransactionType tType;
     private BigDecimal amount;
     private String deposit;
-
 
     private enum TransactionType {
         deposit, withdraw
@@ -43,6 +38,10 @@ public class Transaction implements Serializable {
 
     public String getDeposit() {
         return deposit;
+    }
+
+    public int getTransactionId() {
+        return transactionId;
     }
 
     @Override

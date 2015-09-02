@@ -1,12 +1,8 @@
-package Terminal;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -14,19 +10,13 @@ import org.w3c.dom.NodeList;
 
 public class XmlParser {
 
-    public Terminal parse() {
+    public Terminal parse(String filePath) {
 
         try {
-
-
-
         // Read from file
-        String filePath = "src/main/resources/terminal.xml";
         File xmlFile = new File(filePath);
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db;
-
-
             db = dbf.newDocumentBuilder();
             if (xmlFile.exists()) {
                ArrayList<Transaction> transactions = new ArrayList();
@@ -57,22 +47,15 @@ public class XmlParser {
                         Transaction  transaction = new Transaction(transactionId,depositType,amount,deposit);
                         transactions.add(transaction);
                     }
-
                 }
                 return new Terminal(port, serverIp, outLogPath, terminalId, terminalType,transactions);
-
             }
-
-
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
-
     }
-
-
 }
 
 

@@ -6,7 +6,12 @@
 
     <groupId>org.dotin.projectTwo</groupId>
     <artifactId>org.dotin.projectTwo</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>Server</module>
+        <module>terminal</module>
+    </modules>
     <dependencies>
         <dependency>
             <groupId>org.json</groupId>
